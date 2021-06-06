@@ -7,13 +7,13 @@ public class BlackjackDealer extends BlackjackPlayer{
 	private String victoryShout;
 	
 	
-	public BlackjackHand play(BlackjackHand hand) {
+	public int play(BlackjackHand hand) {
 		BlackjackDealer dealer = new BlackjackDealer();
+		do {
 		if(hand.getHandValue()<17) {
-			do {
 				hand = dealer.hit(hand);
-			}while(hand.getHandValue()<17);
 		}
+		}while(hand.getHandValue()<17);
 		if(hand.getHandValue()>=17 && hand.getHandValue()< 21) {
 			hand = dealer.stay(hand);
 		}
@@ -23,7 +23,7 @@ public class BlackjackDealer extends BlackjackPlayer{
 		if(hand.getHandValue()>21) {
 			System.out.println("The dealer has bust! You win!");
 		}
-		return hand;
+		return hand.getHandValue();
 	}
 	public String declareVictory() {
 		victoryShout = "I, the Blackjack Dealer, am victorious!"

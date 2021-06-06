@@ -36,7 +36,7 @@ public class BlackjackApp {
 		Card dCard = deck.dealCard();
 		dHand.addCard(dCard);
 
-		System.out.println("You Are Now Playing:\n");
+		System.out.println("\nYou Are Now Playing:\n");
 		System.out.println("\tBLACKJACK\n");
 
 		System.out.println("The dealer has been given two cards\n");
@@ -45,6 +45,9 @@ public class BlackjackApp {
 		System.out.println("\nYour card total is: " + pHand.getHandValue());
 
 		do {
+			if (player.checkRules(pHand) == true) {
+				break;
+			}
 			System.out.println("\n1 = Hit\t 2 = Stay");
 			try {
 				selection = input.nextInt();
@@ -54,6 +57,9 @@ public class BlackjackApp {
 				if (selection == 2) {
 					pHand = player.stay(pHand);
 					chooseWinner(pHand, dHand);
+					if (player.checkRules(pHand) == true) {
+						break;
+					}
 					break;
 				}
 				if (selection == 1) {
@@ -63,13 +69,14 @@ public class BlackjackApp {
 					pHand.displayHand();
 					System.out.println("\nYour card total is: " + pHand.getHandValue());
 					if (player.checkRules(pHand) == true) {
+						break;
 					}
 				}
 			} catch (InputMismatchException e) {
 				System.out.println("Your selection must be 1 or 2");
 			}
-		} while (player.checkRules(pHand) == false && dHand.getHandValue()<21);
-
+		} while (player.checkRules(pHand) == false && dHand.getHandValue() < 21);
+		playAgain(input);
 	}
 
 	public BlackjackHand hitHand(BlackjackHand pHand) {
@@ -77,19 +84,31 @@ public class BlackjackApp {
 		return pHand;
 	}
 
-
 	public void chooseWinner(BlackjackHand pHand, BlackjackHand dHand) {
+		//dHand = dealer.play(dHand);
 		player.checkRules(pHand);
-		dHand = dealer.play(dHand);
 		int playerHandTotal = pHand.getHandValue();
-		int dealerHandTotal = dHand.getHandValue();
-		if (playerHandTotal > dealerHandTotal) {
+		int dealerHandTotal = dealer.play(dHand);
+		
+		if (pHand.getHandValue() > dealerHandTotal && playerHandTotal < 21 && dealerHandTotal < 21) {
 			System.out.println("Congrats, you're closer to 21!\nYou win Blackjack!");
-		} else if (playerHandTotal > dealerHandTotal) {
+		} if (pHand.getHandValue() < dealerHandTotal && playerHandTotal < 21 && dealerHandTotal < 21) {
 			System.out.println("Unfortunatly, the dealer won this round with a total of " + dHand.getHandValue());
-		}
-		else if(playerHandTotal == dealerHandTotal) {
+		} if (pHand.getHandValue() == dealerHandTotal && playerHandTotal < 21 && dealerHandTotal < 21) {
 			System.out.println("You and the Dealer have the same total value\nGame Tied");
+		}
+	}
+
+	public void playAgain(Scanner input) {
+		BlackjackApp app = new BlackjackApp();
+
+		System.out.println("\nWould you like to play again? ");
+		System.out.print("Yes/Y\tNo/N ");
+		String selection = input.next();
+		if (selection.equalsIgnoreCase("Yes") || selection.equalsIgnoreCase("Y")) {
+			app.run(input);
+		} else if (selection.equalsIgnoreCase("No") || selection.equalsIgnoreCase("N")) {
+			System.out.println("\nThanks for playing BLACKJACK!\n");
 		}
 	}
 }
